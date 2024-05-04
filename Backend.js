@@ -649,6 +649,43 @@ class cShell {
 }
 
 // *****************************************************************************
+// Log Implementation
+// *****************************************************************************
+
+class cLog extends cFile {
+
+  /**
+   * Creates a new log.
+   * @param name The name of the log to create.
+   */
+  constructor(name) {
+    super(name + "_Log.txt");
+  }
+
+  /**
+   * Logs a message with the current time and date.
+   * @param message The message to log.
+   */
+  Log(message) {
+    let date = new Date();
+    let time = date.toLocaleString();
+    super.Add(time + ": " + message);
+    super.Write(); // Save log on write.
+  }
+
+  /**
+   * Prints out the contents of the log.
+   */
+  Print() {
+    let line_count = this.lines.length;
+    for (let line_index = 0; line_index < line_count; line_index++) {
+      console.log(this.lines[line_index]);
+    }
+  }
+
+}
+
+// *****************************************************************************
 // Utility Functions
 // *****************************************************************************
 
@@ -747,6 +784,7 @@ module.exports = {
   cConfig: cConfig,
   cMime_Reader: cMime_Reader,
   cShell: cShell,
+  cLog: cLog,
   Split: Split,
   Check_Condition: Check_Condition,
   String_To_Hex: String_To_Hex,

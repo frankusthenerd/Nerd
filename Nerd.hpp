@@ -2933,7 +2933,7 @@ namespace Nerd {
     entity["scroll-x"].Set_Number(0);
     entity["scroll-y"].Set_Number(0);
     entity["text"].Set_String("");
-    Clear_Grid(entity);
+    this->Clear_Grid(entity);
   }
 
   /**

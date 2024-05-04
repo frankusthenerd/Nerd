@@ -22,8 +22,20 @@ class cServer {
     let component = this;
     this.mime = new nerd.cMime_Reader("Mime");
     this.config = new nerd.cConfig(name);
+    this.log = new nerd.cLog(name);
     this.server = http.createServer(function(request, response) {
-      component.Handle_Request(request, response);
+      try {
+        component.Handle_Request(request, response);
+      }
+      catch (error) {
+        component.log.Log(error.message);
+      }
+    });
+    this.server.on("dropRequest", function(request, socket) {
+      component.log.Log("Request dropped.");
+    });
+    this.server.on("clientError", function(error, socket) {
+      socket.end(error.message);
     });
   }
 
@@ -53,7 +65,7 @@ class cServer {
       binary = mime.binary;
     }
     else {
-      console.log(input_file.error);
+      this.log.Log(input_file.error);
       status = 404;
     }
     response.writeHead(status, {
@@ -80,7 +92,7 @@ class cServer {
     let status = 0;
     nerd.Check_Condition((params.data != undefined), "No data parameter passed.");
     let data = params.data;
-    let output_file = new nerd.cFile(file)
+    let output_file = new nerd.cFile(file);
     let mime = this.mime.Get_Mime_Type(ext);
     if (!mime.binary) { // Text file.
       // Save the file.
@@ -175,7 +187,15 @@ class cServer {
         let params = querystring.parse(data);
         let file = request.url.substr(1);
         if (file.match(/\w+\.\w+$/)) {
-          component.Write_File(file, response, params);
+          try {
+            component.Write_File(file, response, params);
+          }
+          catch (error) {
+            response.writeHead(401, {
+              "Content-Type": "text/plain"
+            });
+            response.end(error.message);
+          }
         }
         else {
           response.writeHead(401, {
@@ -191,14 +211,31 @@ class cServer {
    * Starts the server.
    */
   Start() {
-    this.server.listen(this.config.Get_Property("port"));
+    try {
+      this.server.listen(this.config.Get_Property("port"));
+    }
+    catch (error) {
+      this.log.Log(error.message);
+    }
   }
 
   /**
    * Stops the server.
+   * @param restart If true causes the server to restart.
    */
-  Stop() {
-    this.server.closeAllConnections();
+  Stop(restart) {
+    try {
+      let component = this;
+      this.server.close(function() {
+        if (restart) {
+          component.Start();
+          component.log.Log("Restarted server.");
+        }
+      });
+    }
+    catch (error) {
+      this.log.Log(error.message);
+    }
   }
 
 }
@@ -235,10 +272,7 @@ class cDaemon {
       }, function(current, prev) {
         let delta = current.mtime.getTime() - prev.mtime.getTime();
         if (delta > 0) {
-          component.server.Stop();
-          setTimeout(function() {
-            component.server.Start();
-          }, component.config.Get_Property("timeout"));
+          component.server.Stop(true); // Do a restart after stop.
         }
       });
     }
