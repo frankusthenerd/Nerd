@@ -68,6 +68,9 @@ class cServer {
       this.log.Log(input_file.error);
       status = 404;
     }
+    if (file == "Readme.txt") {
+      mime_type = "text/html";
+    }
     response.writeHead(status, {
       "Content-Type": mime_type
     });
@@ -75,7 +78,11 @@ class cServer {
       response.end(input_file.buffer, "binary");
     }
     else {
-      response.end(input_file.data);
+      let text = input_file.data;
+      if (file == "Readme.txt") {
+        text = nerd.Format(text);
+      }
+      response.end(text);
     }
   }
 

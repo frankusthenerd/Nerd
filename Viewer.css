@@ -1,0 +1,92 @@
+/*****************************************************************************/
+/* Nerd Viewer Stylesheet                                                    */
+/* Programmed by Francois Lamini                                             */
+/*****************************************************************************/
+
+@font-face {
+  font-family: regular;
+  src: url("Fonts/Regular.ttf");
+  font-style: normal;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: regular;
+  src: url("Fonts/Regular_Italic.ttf");
+  font-style: italic;
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: regular;
+  src: url("Fonts/Regular_Bold.ttf");
+  font-style: normal;
+  font-weight: bold;
+}
+
+/* Prevent text highlighting. */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+}
+
+div, span {
+  -webkit-user-select: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+}
+
+::-webkit-input-placeholder {
+  color: gray;
+}
+
+::-ms-input-placeholder {
+  color: gray;
+}
+
+::-moz-placeholder {
+  color: gray;
+}
+
+::-moz-placeholder {
+  color: gray;
+}
+
+html {
+  width: 100%;
+  height: 100%
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  color: black;
+  font-family: regular, sans-serif;
+  font-size: 16px;
+  background-color: white;
+  cursor: url("Images/Cursor.png"), default;
+}
+
+img, div, canvas {
+  image-rendering: auto;
+}
+
+#screen {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+}
+
+#backbuffer, #sound_stack {
+  position: absolute;
+  left: -2000px;
+  top: 0;
+}

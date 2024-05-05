@@ -210,8 +210,8 @@ class cLayout {
     while (pos_x < this.width) {
       let cell = this.grid[pos_y][pos_x];
       if (cell == '+') {
-        entity["width"].number++;
-        entity["id"].string = id_str;
+        entity["width"]++;
+        entity["id"] = id_str;
         this.grid[pos_y][pos_x] = ' ';
         break;
       }
@@ -219,11 +219,11 @@ class cLayout {
         if (this.Is_Identifier(cell)) {
           id_str += cell; // Collect ID letter.
         }
-        entity["width"].number++;
+        entity["width"]++;
         this.grid[pos_y][pos_x] = ' ';
       }
       else if (cell == '-') { // The box's side.
-        entity["width"].number++;
+        entity["width"]++;
       }
       else {
         throw new Error("Not a valid box. (right)");
@@ -239,12 +239,12 @@ class cLayout {
     while (pos_y < this.height) {
       let cell = this.grid[pos_y][pos_x];
       if (cell == '+') {
-        entity["height"].number++;
+        entity["height"]++;
         this.grid[pos_y][pos_x] = ' ';
         break;
       }
       else if (cell == '|') {
-        entity["height"].number++;
+        entity["height"]++;
         this.grid[pos_y][pos_x] = ' ';
       }
       else {
@@ -274,7 +274,7 @@ class cLayout {
       }
       pos_x--;
     }
-    if (rev_width != entity["width"].number) {
+    if (rev_width != entity["width"]) {
       throw new Error("Not a valid box. (width mismatch)");
     }
     // Navigate up.
@@ -295,7 +295,7 @@ class cLayout {
       }
       pos_y--;
     }
-    if (rev_height != entity["height"].number) {
+    if (rev_height != entity["height"]) {
       throw cError("Not a valid box. (height mismatch)");
     }
   }
@@ -612,14 +612,14 @@ class cPage extends cLayout {
       this.Render_List(entity);
     }
     // Draw the canvas of the component.
-    this.io.Draw_Canvas(entity["x"] * this.cell_w, entity["y"].number * this.cell_h, entity["width"] * this.cell_w, entity["height"] * this.cell_h);
+    this.io.Draw_Canvas(entity["x"] * this.cell_w, entity["y"] * this.cell_h, entity["width"] * this.cell_w, entity["height"] * this.cell_h);
   }
 
   /**
    * Called when the layout is initialized.
    */
   On_Init() {
-    // Nothing here.
+    // To be implemented in app.
   }
 
   /**
@@ -638,7 +638,7 @@ class cPage extends cLayout {
     let dy = Math.floor(((entity["height"] * this.cell_h) - this.io.Get_Text_Height(entity["text"])) / 2);
     let width = this.io.Get_Text_Width(entity["text"]);
     let char_w = this.io.Get_Text_Width("X");
-    let limit = (entity["width"].number * this.cell_w) - 2 - char_w; // Don't allow extra character.
+    let limit = (entity["width"] * this.cell_w) - 2 - char_w; // Don't allow extra character.
     if (this.sel_component == entity["id"]) { // Does field have input focus?
       if ((Get_Char_Code(this.key) >= Get_Char_Code(' ')) && (Get_Char_Code(this.key) <= Get_Char_Code('~'))) {
         if (width < limit) { // Only allow text if input has space.

@@ -929,6 +929,101 @@ class cIO_Control {
 }
 
 // *****************************************************************************
+// Browser Implementation
+// *****************************************************************************
+
+class cBrowser {
+ 
+  /**
+   * Create a new browser object.
+   */
+  constructor() {
+    this.name = "";
+    this.ip = "";
+    this.port = "";
+  }
+
+  /**
+   * Detects the type of browser that is running the system.
+   * @param on_success Called if the browser is successfull detected.
+   * @param on_error Called if there was a problem detecting the browser. A parameter containing the error is passed in.
+   */
+  Detect(on_success, on_error) {
+    let old_browser = false;
+    let unknown_browser = false;
+    let unsupported_browser = false;
+    if (navigator.userAgent.match(/Android/)) { // Android
+      this.name = "android";
+      this.ip = location.hostname;
+      this.port = location.port;
+    }
+    else if (navigator.userAgent.match(/Chrome\/\d+/)) { // Chrome
+      let parts = navigator.userAgent.split(/\s+/);
+      // Find pair.
+      let part_count = parts.length;
+      for (let part_index = 0; part_index < part_count; part_index++) {
+        let part = parts[part_index];
+        if (part.match(/Chrome/)) {
+          let pair = part.split(/\//);
+          let version = parseInt(pair[1]);
+          if (version < 50) { // Older than 2016?
+            old_browser = true;
+          }
+          break;
+        }
+      }
+      this.name = "chrome";
+      this.ip = location.hostname;
+      this.port = location.port;
+    }
+    else if (navigator.userAgent.match(/Firefox\/\d+/)) { // Firefox
+      let parts = navigator.userAgent.split(/\s+/);
+      // Find pair.
+      let part_count = parts.length;
+      for (let part_index = 0; part_index < part_count; part_index++) {
+        let part = parts[part_index];
+        if (part.match(/Firefox/)) {
+          let pair = part.split(/\//);
+          let version = parseInt(pair[1]);
+          if (version < 50) { // Older than 2016?
+            old_browser = true;
+          }
+          break;
+        }
+      }
+      this.name = "firefox";
+      this.ip = location.hostname;
+      this.port = location.port;
+    }
+    else { // Unknown browser.
+      unknown_browser = true;
+    }
+    if (unknown_browser) {
+      window.addEventListener("load", function() {
+        on_error("browser-unknown");
+      }, false);
+    }
+    else if (old_browser) {
+      window.addEventListener("load", function() {
+        on_error("browser-old");
+      }, false);
+    }
+    else if (unsupported_browser) {
+      window.addEventListener("load", function() {
+        on_error("unsupported-browser");
+      }, false);
+    }
+    else {
+      // Wait for window to load first.
+      window.addEventListener("load", function() {
+        on_success();
+      }, false);
+    }
+  }
+  
+}
+
+// *****************************************************************************
 // Utility Functions
 // *****************************************************************************
 
@@ -964,39 +1059,6 @@ function Check_Condition(condition, error) {
   if (!condition) {
     throw new Error(error);
   }
-}
-
-/**
- * Formats text according to Wiki format.
- * @param text The wiki text to format into HTML.
- * @return HTML generated from wiki text.
- */
-function Format(text) {
-  return text.replace(/&/g, "&amp;")
-             .replace(/>/g, "&gt;")
-             .replace(/</g, "&lt;")
-             .replace(/\*{2}/g, "&ast;")
-             .replace(/#{2}/g, "&num;")
-             .replace(/@{2}/g, "&commat;")
-             .replace(/\${2}/g, "&dollar;")
-             .replace(/%{2}/g, "&percnt;")
-             .replace(/\^{2}/g, "&Hat;")
-             .replace(/\|{2}/g, "&vert;")
-             .replace(/@param\s+(\w+)/g, '<span class="parameter">$1</span>')
-             .replace(/@return/g, '<span class="return">returns</span>')
-             .replace(/@throws/g, '<span class="throws">throws</span>')
-             .replace(/@see\s+(\w+:?\w*)/g, '<span class="see">see</span> <a href="hash=$1">$1</a>')
-             .replace(/#([^#]+)#/g, "<b>$1</b>")
-             .replace(/\*([^*]+)\*/g, "<i>$1</i>")
-             .replace(/@([^@]+)@/g, "<h1>$1</h1>")
-             .replace(/\$([^$]+)\$/g, "<h2>$1</h2>")
-             .replace(/\^([^\^]+)\^/g, '<div class="table_head">$1</div>')
-             .replace(/\|([^\|]+)\|/g, '<div class="table_data">$1</div>')
-             .replace(/%([^%]+)%/g, "<code><pre>$1</pre></code>")
-             .replace(/(http:\/\/\S+|https:\/\/\S+)/g, '<a href="$1" target="_blank">$1</a>')
-             .replace(/image:\/\/(\S+)/g, '<img src="$1" width="90%" />')
-             .replace(/anchor:\/\/(\S+)/g, '<a name="$1"></a>')
-             .replace(/\r\n|\r|\n/g, "<br />");
 }
 
 /**
