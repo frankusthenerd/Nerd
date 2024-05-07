@@ -602,6 +602,7 @@ class cShell {
    */
   constructor() {
     this.command_log = [];
+    this.command = null;
   }
 
   /**
@@ -612,17 +613,17 @@ class cShell {
   Execute_Command(command, on_close) {
     let params = command.split(/\s+/);
     let op = params.shift();
-    let cmd = child_process.spawn(op, params, {
+    this.command = child_process.spawn(op, params, {
       cwd: cFile.startup
     });
     let component = this;
-    cmd.stdout.on("data", function(data) {
+    this.command.stdout.on("data", function(data) {
       component.command_log.push(data.toString("utf8"));
     });
-    cmd.stderr.on("data", function(data) {
+    this.command.stderr.on("data", function(data) {
       component.command_log.push("Error: " + data.toString("utf8"));
     });
-    cmd.on("close", function(code) {
+    this.command.on("close", function(code) {
       let log = new cFile(op + ".txt");
       log.Add_Lines(component.command_log);
       log.Write();
@@ -644,6 +645,13 @@ class cShell {
     else {
       on_done();
     }
+  }
+
+  /**
+   * Closes the currently running command. Might not work in batch mode.
+   */
+  Close() {
+    this.command.kill();
   }
 
 }

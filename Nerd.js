@@ -19,7 +19,8 @@ function Nerd(params) {
     if (command == "-server") {
       nerd.Check_Condition((params.length == 2), "Missing server name.");
       let name = params[1];
-      let daemon = new server.cDaemon(name);
+      let nerd_srv = new server.cServer(name);
+      nerd_srv.Start();
     }
     else if (command == "-project") {
       nerd.Check_Condition((params.length >= 3), "Missing project name and/or server name.");
@@ -68,7 +69,7 @@ function Nerd(params) {
 }
 
 // *****************************************************************************
-// Server Initializer Entry Point
+// Entry Point
 // *****************************************************************************
 
 Nerd(process.argv.slice(2));

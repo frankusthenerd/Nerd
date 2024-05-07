@@ -5,7 +5,6 @@
 
 let http = require("http");
 let querystring = require("querystring");
-let fs = require("fs");
 let nerd = require("./Backend");
 
 // *****************************************************************************
@@ -226,65 +225,6 @@ class cServer {
     }
   }
 
-  /**
-   * Stops the server.
-   * @param restart If true causes the server to restart.
-   */
-  Stop(restart) {
-    try {
-      let component = this;
-      this.server.close(function() {
-        if (restart) {
-          component.Start();
-          component.log.Log("Restarted server.");
-        }
-      });
-    }
-    catch (error) {
-      this.log.Log(error.message);
-    }
-  }
-
-}
-
-// *****************************************************************************
-// Daemon Implementation
-// *****************************************************************************
-
-class cDaemon {
-
-  /**
-   * Creates a daemon.
-   * @param name The name of the server.
-   */
-  constructor(name) {
-    this.config = new nerd.cConfig(name);
-    this.server = new cServer(name);
-    this.server.Start();
-    this.Check_For_Changes();
-  }
-
-  /**
-   * Checks for any changes in selected files.
-   */
-  Check_For_Changes() {
-    let component = this;
-    // Check for changes.
-    let files = this.config.Get_Property("files").split(",");
-    let file_count = files.length;
-    for (let file_index = 0; file_index < file_count; file_index++) {
-      let file = nerd.cFile.Get_Local_Path(files[file_index]);
-      fs.watchFile(file, {
-        interval: component.config.Get_Property("timeout")
-      }, function(current, prev) {
-        let delta = current.mtime.getTime() - prev.mtime.getTime();
-        if (delta > 0) {
-          component.server.Stop(true); // Do a restart after stop.
-        }
-      });
-    }
-  }
-
 }
 
 // *****************************************************************************
@@ -292,6 +232,5 @@ class cDaemon {
 // *****************************************************************************
 
 module.exports = {
-  cServer: cServer,
-  cDaemon: cDaemon
+  cServer: cServer
 };
