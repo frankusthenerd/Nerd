@@ -25,10 +25,10 @@ class cCoder_Doc {
       "Regular_Italic.ttf"
     ];
     this.copy_file_locs = [
-      "",
-      "Fonts",
-      "Fonts",
-      "Fonts"
+      "/",
+      "Fonts/",
+      "Fonts/",
+      "Fonts/"
     ];
   }
 
@@ -256,7 +256,7 @@ class cCoder_Doc {
     for (let file_index = 0; file_index < def_file_count; file_index++) {
       let file = this.copy_file_list[file_index];
       let loc = this.copy_file_locs[file_index];
-      let source = "up/Nerd/" + loc + "/" + file;
+      let source = "up/Nerd/" + loc + file;
       let dest = this.docs_folder + "/" + file;
       nerd.cFile.Copy_File(source, dest);
       console.log("Copied file " + file + ".");

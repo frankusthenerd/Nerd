@@ -300,7 +300,7 @@ class cFile {
       folder = cFile.Escape_Path(folder);
       // Remove trailing slash.
       folder = (folder[folder.length - 1] == path.sep) ? folder.substr(0, folder.length - 1) : folder;
-      let dest = Get_Local_Path(folder);
+      let dest = cFile.Get_Local_Path(folder);
       let files = fs.readdirSync(dest);
       // Process files to determine if they are directories.
       let file_count = files.length;
@@ -778,7 +778,7 @@ function Format(text) {
              .replace(/\|([^\|]+)\|/g, '<div class="table_data">$1</div>')
              .replace(/%([^%]+)%/g, "<code><pre>$1</pre></code>")
              .replace(/(http:\/\/\S+|https:\/\/\S+)/g, '<a href="$1" target="_blank">$1</a>')
-             .replace(/image:\/\/(\S+)/g, '<img src="$1" width="90%" />')
+             .replace(/image:\/\/(\S+)/g, '<img src="$1" />')
              .replace(/anchor:\/\/(\S+)/g, '<a name="$1"></a>')
              .replace(/\r\n|\r|\n/g, "<br />");
 }

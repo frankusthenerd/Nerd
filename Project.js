@@ -21,7 +21,7 @@ class cProject {
     this.project = name;
     this.config = new nerd.cConfig(server);
     this.mime = new nerd.cMime_Reader("Mime");
-    this.modified = new nerd.cConfig("Modified");
+    this.modified = null;
   }
 
   /**
@@ -111,8 +111,10 @@ class cProject {
       let manifest = new nerd.cFile("Manifest.txt");
       manifest.Read();
       let file_list = manifest.lines.concat("Manifest.txt"); // Add in manifest.
+      component.modified = new nerd.cConfig("Modified");
       component.Upload_File(file_list, 0, function() {
         console.log("Uploaded project " + component.project + ".");
+        component.modified.Save();
         nerd.cFile.Revert_Folder();
       });
     });
@@ -129,7 +131,7 @@ class cProject {
       let file = file_list[index];
       let url_file = nerd.cFile.To_URL_Path("up/" + this.project + "/" + file);
       let modified = nerd.cFile.Get_File_Modified_Time(file);
-      let needs_upload = false;
+      let needs_upload = false; 
       let ext = nerd.cFile.Get_Extension(file);
       let base_name = nerd.cFile.Get_File_Name(file);
       let server = this.config.Get_Property("server");
@@ -169,7 +171,6 @@ class cProject {
         else if (this.mime.Has_Mime_Type(ext)) {
           // Update modification time.
           this.modified.Set_Property(file, modified);
-          this.modified.Save();
           // Upload the file.
           let mime = this.mime.Get_Mime_Type(ext);
           let file_reader = new nerd.cFile(file);
@@ -362,6 +363,40 @@ class cProject {
           nerd.cFile.Revert_Folder();
         });
       }
+    }
+  }
+
+  /**
+   * Lists all projects on the server.
+   * @param srv_name The name of the server where the projects reside.
+   */
+  static List_Projects(srv_name) {
+    if (srv_name == "local") {
+      let projects = nerd.cFile.Query_Files("up", "folders");
+      let project_count = projects.length;
+      for (let project_index = 0; project_index < project_count; project_index++) {
+        let project = projects[project_index];
+        console.log(project);
+      }
+    }
+    else {
+      let config = new nerd.cConfig(srv_name);
+      let server = config.Get_Property("server");
+      let port = config.Get_Property("port");
+      http.get("http://" + server + ":" + port + "/query-files?folder=up&search=folders", function(response) {
+        let data = [];
+        response.on("data", function(chunk) {
+          data.push(chunk);
+        });
+        response.on("end", function() {
+          let projects = nerd.Split(data.join(""));
+          let project_count = projects.length;
+          for (let project_index = 0; project_index < project_count; project_index++) {
+            let project = projects[project_index];
+            console.log(project);
+          }
+        });
+      });
     }
   }
 

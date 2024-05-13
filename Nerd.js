@@ -55,9 +55,13 @@ function Nerd(params) {
     }
     else if (command == "-coder-doc") {
       nerd.Check_Condition((params.length == 2), "Missing project name.");
-      let project = params[1];
-      let generator = new coder_doc.cCoder_Doc(project);
+      let name = params[1];
+      let generator = new coder_doc.cCoder_Doc(name);
       generator.Process_Code();
+    }
+    else if (command == "-list") {
+      let srv_name = params[1];
+      project.cProject.List_Projects(srv_name);
     }
     else {
       throw new Error("Invalid command " + command + ".");

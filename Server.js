@@ -79,7 +79,7 @@ class cServer {
     else {
       let text = input_file.data;
       if (file == "Readme.txt") {
-        text = nerd.Format(text);
+        text = this.Render_Markdown(file, text);
       }
       response.end(text);
     }
@@ -158,6 +158,33 @@ class cServer {
       "Content-Type": "text/plain"
     });
     response.end(output);
+  }
+
+  /**
+   * Renders markdown into HTML.
+   * @param title The title of the document.
+   * @param text The markdown text to render.
+   * @return The HTML block.
+   */
+  Render_Markdown(title, text) {
+    let markdown = nerd.Format(text);
+    let html = [
+      '<html>',
+      '<head>',
+      '<title>' + title + '</title>',
+      '<style type="text/css">',
+      '@import url("Markdown.css")',
+      '</style>',
+      '<link rel="icon" href="Icon.ico" type="image/x-icon" />',
+      '</head>',
+      '<body>',
+      '<div class="Container">',
+      markdown,
+      '</div>',
+      '</body>',
+      '</html>'
+    ];
+    return html.join("\n");
   }
 
   /**
