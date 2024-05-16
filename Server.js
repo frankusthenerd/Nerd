@@ -252,6 +252,16 @@ class cServer {
     }
   }
 
+  /**
+   * Stops the server.
+   * @param on_stop Called when the server is stopped.
+   */
+  Stop(on_stop) {
+    this.server.close(function() {
+      on_stop();
+    });
+  }
+
 }
 
 // *****************************************************************************
@@ -261,3 +271,13 @@ class cServer {
 module.exports = {
   cServer: cServer
 };
+
+// *****************************************************************************
+// Entry Point
+// *****************************************************************************
+
+if (process.argv.length == 3) {
+  let server_name = process.argv[2];
+  let server = new cServer(server_name);
+  server.Start();
+}

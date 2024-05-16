@@ -101,8 +101,9 @@ class cProject {
 
   /**
    * Uploads a project to the server.
+   * @param on_upload Called when the project is finished uploading.
    */
-  Upload_Project() {
+  Upload_Project(on_upload) {
     nerd.cFile.Change_Folder("up");
     // Create the project folder.
     let component = this;
@@ -116,6 +117,7 @@ class cProject {
         console.log("Uploaded project " + component.project + ".");
         component.modified.Save();
         nerd.cFile.Revert_Folder();
+        on_upload();
       });
     });
   }
@@ -236,8 +238,9 @@ class cProject {
 
   /**
    * Downloads the current project from the server.
+   * @param on_download Called when the project is finished downloading.
    */
-  Download_Project() {
+  Download_Project(on_download) {
     nerd.cFile.Change_Folder("up");
     let component = this;
     nerd.cFile.Create_Folder(this.project);
@@ -250,6 +253,7 @@ class cProject {
       component.Download_File(file_list, 0, function() {
         console.log("Downloaded project " + component.project + ".");
         nerd.cFile.Revert_Folder();
+        on_download();
       });
     });
   }
@@ -315,8 +319,9 @@ class cProject {
 
   /**
    * Compiles a C++ program with Allegro for Windows.
+   * @param on_compile Called when the program is done compiling.
    */
-  Compile_Cpp_With_Allegro_For_Windows() {
+  Compile_Cpp_With_Allegro_For_Windows(on_compile) {
     nerd.cFile.Change_Folder("up/" + this.project);
     let library = "-LC:\\mingw64\\lib";
     let include = "-IC:\\mingw64\\include";
@@ -361,6 +366,7 @@ class cProject {
         shell.Execute_Batch(batch, 0, function() {
           console.log("Compilation complete!");
           nerd.cFile.Revert_Folder();
+          on_compile();
         });
       }
     }
@@ -369,8 +375,9 @@ class cProject {
   /**
    * Lists all projects on the server.
    * @param srv_name The name of the server where the projects reside.
+   * @param on_list Called when all projects are listed.
    */
-  static List_Projects(srv_name) {
+  static List_Projects(srv_name, on_list) {
     if (srv_name == "local") {
       let projects = nerd.cFile.Query_Files("up", "folders");
       let project_count = projects.length;
@@ -378,6 +385,7 @@ class cProject {
         let project = projects[project_index];
         console.log(project);
       }
+      on_list();
     }
     else {
       let config = new nerd.cConfig(srv_name);
@@ -395,6 +403,7 @@ class cProject {
             let project = projects[project_index];
             console.log(project);
           }
+          on_list();
         });
       });
     }

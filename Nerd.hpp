@@ -704,6 +704,7 @@ namespace Nerd {
    */
   cValue::cValue(int number) {
     this->Set_Number(number);
+    this->string = Number_To_Text(number); // Also set string value.
   }
 
   /**
@@ -712,6 +713,12 @@ namespace Nerd {
    */
   cValue::cValue(std::string string) {
     this->Set_String(string);
+    try {
+      this->number = Text_To_Number(string);
+    }
+    catch (cError number_error) {
+      this->number = 0;
+    }
   }
 
   /**
@@ -3329,6 +3336,18 @@ namespace Nerd {
   int cPage::Get_List_Item_Count(tObject& entity) {
     cArray<std::string> items = Parse_Sausage_Text(entity["text"].string, ",");
     return items.Count();
+  }
+
+  /**
+   * Gets the item of the list given the index.
+   * @param index The index of the list item to get.
+   * @param entity The list component.
+   * @return The value at the list index.
+   * @throws An error if the index is invalid.
+   */
+  std::string cPage::Get_List_Item(tObject& entity, int index) {
+    cArray<std::string> items = Parse_Sausage_Text(entity["text"].string, ",");
+    return items[index];
   }
 
   /**

@@ -510,6 +510,7 @@ namespace Nerd {
       void Add_List_Item(tObject& entity, std::string value);
       void Remove_List_Item(tObject& entity, int index);
       int Get_List_Item_Count(tObject& entity);
+      std::string Get_List_Item(tObject& entity, int index);
       void Clear_List(tObject& entity);
       void Add_Toolbar_Item(tObject& entity, std::string value);
       void Remove_Toolbar_Item(tObject& entity, int index);

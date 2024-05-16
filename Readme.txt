@@ -17,40 +17,57 @@ The Nerd server-client system consists of the following components:
 - Frontend.js: The front end API for building web sites. Used with layout.
 
 @Nerd Commands:@
-The nerd commands via the command line interface are as follows:
+There is a Nerd command interpreter where you enter commands just
+like in a command shell. It is independent of any shell. To start
+the Nerd shell type in:
+
+*node Nerd.js <nerd-config>*
+
+There is also a daemon which can start the server as a process and
+allow changes to files with automatic reloading. To start the daemon
+type in:
+
+*node Daemon.js <nerd-config>*
+
+The Nerd shell will present you with a prompt. You can then type in
+commands just as if you were on the terminal. The commands are as
+follows:
 
 $Server Commands:$
 #Start Server#
-*node Nerd.js -server <nerd-config>*
+*server start*
 
-#Start Daemon#
-*node Daemon.js <nerd-config>*
+#Stop Server#
+*server stop*
 
 $Project Commands:$
 #Create Project Manifest#
-*node Nerd.js -project <project> <nerd-config> new-manifest*
+*project <project> new-manifest*
 
 #Add Folder to Manifest#
-*node Nerd.js -project <project> <nerd-config> add-folder <folder>*
+*project <project> add-folder <folder>*
 
 #Generate Resources File#
-*node Nerd.js -project <project> <nerd-config> generate-resources*
+*project <project> generate-resources*
 
 #Upload Project#
-*node Nerd.js -project <project> <nerd-config> upload*
+*project <project> upload*
 
 #Download Project#
-*node Nerd.js -project <project> <nerd-config> download*
+*project <project> download*
 
 #Compile Nerd App (Windows)#
-*node Nerd.js -project <project> <nerd-config> compile-for-windows*
+*project <project> compile-for-windows*
 
 #List Projects#
-*node Nerd.js -list <nerd-config> || local*
+*list <nerd-config> || local*
 
 $Documentation Commands:$
 #Run Coder-Doc#
-*node Nerd.js -project <project> <nerd-config> -coder-doc*
+*coder-doc <project>*
+
+$Exiting the Nerd$
+*exit*
 
 @Nerd Configuration@
 To configure the Nerd server you need to create a config file with the .txt
@@ -225,6 +242,12 @@ http://www.nerdserver.cloud:8080/up/Sausage_Script/Docs/Files.html
 A terminal renderer built from the ground up.
 
 http://www.nerdserver.cloud:8080/up/Terminal/Docs/Files.html
+
+#Object Catalog#
+An object creator for Nerd applications. Uses hashmaps to represent
+objects.
+
+http://www.nerdserver.cloud:8080/up/Object_Catalog/Docs/Files.html
 
 @Nerd Author@
 Frankus the Nerd (Francois) is the creator of the Nerd server-client system. He
